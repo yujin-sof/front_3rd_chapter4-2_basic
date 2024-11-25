@@ -65,12 +65,41 @@ function displayProducts(products) {
 
 }
 
+function processCalculation(iterations) {
+    let processed = 0;
+    const CHUNK_SIZE = 1000000;
+ 
+    return new Promise(resolve => {
+        function processChunk() {
+            const end = Math.min(processed + CHUNK_SIZE, iterations);
+            
+            for(let i = processed; i < end; i++) {
+                const temp = Math.sqrt(i) * Math.sqrt(i);
+            }
+            
+            processed = end;
+ 
+            if(processed < iterations) {
+                setTimeout(processChunk, 0); 
+            } else {
+                resolve();
+            }
+        }
+        
+        processChunk();
+    });
+ }
+
+window.onload = () => {
+    let status = 'idle';
+    let productSection = document.querySelector('#all-products');
 
 
-loadProducts();
-
-// Simulate heavy operation. It could be a complex price calculation.
-for (let i = 0; i < 10000000; i++) {
-    const temp = Math.sqrt(i) * Math.sqrt(i);
+    window.onscroll = () => {
+        let position = productSection.getBoundingClientRect().top - (window.scrollY + window.innerHeight);
+        if (status == 'idle' && position <= 0) {
+            loadProducts();
+            processCalculation(10000000);
+        }
+    }
 }
-
